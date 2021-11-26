@@ -19,8 +19,8 @@ SELECT
     (stays_in_week_nights * adr) AS weekday_rates,      -- calculate the weekday booking rates
     stays_in_weekend_nights AS weekends,
     (stays_in_weekend_nights * adr) AS weekend_rates, 	-- calculate the weekend booking rates
-    adr AS rates_per_night		                          -- adr = average daily rates
+    adr AS rates_per_night		                -- adr = average daily rates
 FROM
-    revenue		                                          -- this is the temporary table that was created earlier
+    revenue		                               	-- this is the temporary table that was created earlier
 WHERE 
-	country != "0";  	                                    -- excluded data with no country information
+    country != "0";  	                                -- excluded data with no country information
