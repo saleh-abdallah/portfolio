@@ -1,4 +1,6 @@
+--
 -- Average salary of the male and female employees over the years per department
+--
 
 SELECT 
     d.dept_name,
@@ -16,7 +18,9 @@ FROM
 GROUP BY 1 , 2
 HAVING calendar_year <=2002;
 
+--
 -- Male vs Female Ratio by Department
+--
 
 SELECT 
     d.dept_name, e.gender, COUNT(e.emp_no) AS no_of_employees
@@ -29,7 +33,9 @@ FROM
     
 GROUP BY 1 , 2;
 
+--
 -- Overall Gender Distribution
+--
 
 SELECT 
     e.gender, COUNT(e.gender) AS no_of_managers
@@ -41,7 +47,9 @@ WHERE
     t.title = 'manager'
 GROUP BY 1;
 
+--
 -- No. of employees per department
+--
 
 SELECT DISTINCT
     d.dept_name, COUNT(e.emp_no) AS no_of_employees
@@ -53,7 +61,9 @@ FROM
     departments d ON de.dept_no = d.dept_no
 GROUP BY 1;
 
+--
 -- Managers average salary by department
+--
 
 SELECT 
     d.dept_name,
@@ -74,14 +84,18 @@ WHERE
     t.title = 'Manager'
 GROUP BY 1 , 2;
 
+--
 -- No. of Employees
+--
 
 SELECT 
     COUNT(DISTINCT emp_no) as no_of_employees
 FROM
     employees;
 
+--
 -- Employees agegroups
+--
 
 SELECT 
     s.salary_group, COUNT(*) AS count
@@ -99,7 +113,9 @@ FROM
 GROUP BY s.salary_group
 order by s.salary_group;
 
+--
 -- Salary scales by title and department
+--
 
 SELECT 
     d.dept_name,
