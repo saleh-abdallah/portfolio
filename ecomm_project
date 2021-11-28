@@ -1,0 +1,16 @@
+
+
+
+-- Finding top traffic Sources to understand where the bulk of the website sessions are coming from?
+
+SELECT 
+    utm_source,
+    utm_campaign,
+    http_referer,
+    COUNT(DISTINCT website_session_id) AS sessions
+FROM
+    website_sessions
+GROUP BY 1 , 2 , 3
+ORDER BY sessions DESC;
+
+-- https://github.com/saleh-abdallah/portfolio/blob/main/hotel_project
