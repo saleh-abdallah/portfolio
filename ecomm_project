@@ -346,5 +346,54 @@ GROUP BY 1 , 2;
 
 -- [Findings] the conv_rates are gradually increasing.
 
+------------------------------------------------------------------------------------------------------------------------------------------------- 
+-- 17 -- What are the quarterly orders and conversion rates for each channel?
+
+SELECT 
+    YEAR(w.created_at) AS year,
+    QUARTER(w.created_at) AS quarter,
+    COUNT(DISTINCT CASE WHEN utm_source = 'gsearch' AND utm_campaign = 'nonbrand' THEN o.order_id ELSE NULL END) AS g_nonbrand,
+    ROUND((COUNT(DISTINCT CASE WHEN utm_source = 'gsearch' AND utm_campaign = 'nonbrand' THEN o.order_id ELSE NULL END) 
+		/ COUNT(DISTINCT CASE WHEN utm_source = 'gsearch' AND utm_campaign = 'nonbrand' THEN w.website_session_id ELSE NULL END)) * 100, 2) AS g_nonbrand_conv_rate,
+    COUNT(DISTINCT CASE WHEN utm_source = 'bsearch' AND utm_campaign = 'nonbrand' THEN o.order_id ELSE NULL END) AS b_nonbrand,
+    ROUND((COUNT(DISTINCT CASE WHEN utm_source = 'bsearch' AND utm_campaign = 'nonbrand' THEN o.order_id ELSE NULL END) 
+		/ COUNT(DISTINCT CASE WHEN utm_source = 'bsearch' AND utm_campaign = 'nonbrand' THEN w.website_session_id ELSE NULL END)) * 100, 2) AS b_nonbrand_conv_rate,
+    COUNT(DISTINCT CASE WHEN utm_campaign = 'brand' THEN o.order_id ELSE NULL END) AS brand,
+    ROUND((COUNT(DISTINCT CASE WHEN utm_campaign = 'brand' THEN o.order_id ELSE NULL END) 
+		/ COUNT(DISTINCT CASE WHEN utm_campaign = 'brand' THEN w.website_session_id ELSE NULL END)) * 100, 2) AS brand_conv_rate,
+    COUNT(DISTINCT CASE WHEN utm_source IS NULL AND http_referer IS NOT NULL THEN o.order_id ELSE NULL END) AS organic_search,
+    ROUND((COUNT(DISTINCT CASE WHEN utm_source IS NULL AND http_referer IS NOT NULL THEN o.order_id ELSE NULL END) 
+		/ COUNT(DISTINCT CASE WHEN utm_source IS NULL AND http_referer IS NOT NULL THEN w.website_session_id ELSE NULL END)) * 100, 2) AS organic_conv_rate,
+    COUNT(DISTINCT CASE WHEN utm_source IS NULL AND http_referer IS NULL THEN o.order_id ELSE NULL END) AS direct_type_in,
+    ROUND((COUNT(DISTINCT CASE WHEN utm_source IS NULL AND http_referer IS NULL THEN o.order_id ELSE NULL END) 
+		/ COUNT(DISTINCT CASE WHEN utm_source IS NULL AND http_referer IS NULL THEN w.website_session_id ELSE NULL END)) * 100, 2) AS direct_conv_rate
+FROM
+    website_sessions w
+        LEFT JOIN
+    orders o ON w.website_session_id = o.website_session_id
+GROUP BY 1 , 2;
+
+[Findings] The order number is increasing over each quarter.
+
+------------------------------------------------------------------------------------------------------------------------------------------------- 
+-- 18 -- What is the monthly trending total revenue per product?
+
+SELECT 
+    YEAR(created_at) AS year,
+    QUARTER(created_at) AS quarter,
+    SUM(CASE WHEN product_id = 1 THEN price_usd ELSE NULL END) AS ps4_revenue,
+    Round(((SUM(CASE WHEN product_id = 1 THEN price_usd ELSE NULL END) / SUM(price_usd)) *100), 2) AS ps4_revenue_rate,
+    SUM(CASE WHEN product_id = 2 THEN price_usd ELSE NULL END) AS xbox_revenue,
+    Round(((SUM(CASE WHEN product_id = 2 THEN price_usd ELSE NULL END) / SUM(price_usd)) *100), 2) AS xbox_revenue_rate,
+    SUM(CASE WHEN product_id = 3 THEN price_usd ELSE NULL END) AS nintendo_revenue,
+    Round(((SUM(CASE WHEN product_id = 3 THEN price_usd ELSE NULL END) / SUM(price_usd)) *100), 2) AS nintendo_revenue_rate,
+    SUM(CASE WHEN product_id = 4 THEN price_usd ELSE NULL END) AS ps5_revenue,
+    Round(((SUM(CASE WHEN product_id = 4 THEN price_usd ELSE NULL END) / SUM(price_usd)) *100), 2) AS ps5_revenue_rate,
+    SUM(price_usd) AS total_revenue
+FROM
+    order_items 
+GROUP BY 1 , 2;
+
+[Findings] PS4 still has the highest revenue although the revenue began to decrease in Q1 2014 at the launch of the PS5 which has an increase in revenue since then.
 
 
