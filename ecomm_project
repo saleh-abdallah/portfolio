@@ -1,10 +1,7 @@
-
-
-
 /*
-
-Traffic sources analysis
-
+                            
+Ecommerce Website Analysis  
+                            
 */
 
 -- 1 -- What are the top traffic sources to understand where the bulk of the website sessions are coming from?
@@ -19,7 +16,7 @@ FROM
 GROUP BY 1 , 2 , 3
 ORDER BY sessions DESC;
 
--- [Findings] gsearch nonbrand have the highest sessions
+-- [Findings] gsearch nonbrand has the highest sessions.
 
 -----------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -57,13 +54,11 @@ WHERE
         AND w.utm_campaign = 'nonbrand'
 GROUP BY 1;
 
--- [Findings] desktop is 3.73% whereas mobile is 0.96%
+-- [Findings] desktop is at 3.73% whereas mobile is at 0.96%
 
 -----------------------------------------------------------------------------------------------------------------------------------------------
 
 -- 4 -- What are the monthly trends of the gsearch sessions and orders?
-
-select utm_source, count(distinct website_session_id) from website_sessions;
 
 SELECT 
     YEAR(w.created_at) AS year,
@@ -81,7 +76,7 @@ WHERE
 GROUP BY 1 , 2
 ORDER BY 2;
 
--- [Findings]  there is a growth in the total number of sessions and orders
+-- [Findings]  There is a growth in the total number of sessions and orders.
 
 -----------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -103,7 +98,7 @@ WHERE
         AND w.utm_source = 'gsearch'
 GROUP BY 1 , 2;
 
--- [Findings]  there is a growth in both sessions and orders for brand and nonbrand
+-- [Findings]  There is a growth in both sessions and orders for brand and nonbrand.
 
 -----------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -126,7 +121,7 @@ WHERE
         AND w.utm_campaign = 'nonbrand'
 GROUP BY 1 , 2;
 
--- [Findings]  the number of sessions and orders from desktops is a lot higher than mobiles
+-- [Findings]  The number of sessions and orders from desktops is a lot higher than mobiles.
 
 -----------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -144,7 +139,7 @@ WHERE
     created_at  LIKE '2014%'
 GROUP BY 1,2;
 
--- [Findings] gsearch sessions are a lot more than bsearch sessions
+-- [Findings] gsearch sessions are a lot more than bsearch sessions.
 
 -----------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -165,7 +160,7 @@ WHERE
         AND utm_campaign = 'nonbrand'
 GROUP BY 1 , 2;
 
--- [Findings] bsearch has the highest cov_rate on desktop and gsearch is highest on mobile
+-- [Findings] bsearch has the highest cov_rate on desktop and gsearch is highest on mobile.
 
 -----------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -188,10 +183,9 @@ WHERE
         AND utm_campaign = 'nonbrand'
 GROUP BY YEARWEEK(created_at);
 
--- [Findings] bsearch traffic dropped off a bit and gsearch was down too after Black Friday but bsearch dropped even more
+-- [Findings] bsearch traffic dropped off a bit and gsearch was down too after Black Friday but bsearch dropped even more.
 
 -----------------------------------------------------------------------------------------------------------------------------------------------
-
 
 -- 10 -- What is the organic search, direct type in, and paid brand search sessions by month , and show those sessions as a % of paid search nonbrand
 
@@ -214,10 +208,9 @@ WHERE
     created_at LIKE '2014%'
 GROUP BY 1 , 2;
 
--- [Findings] the brand, direct, and organic volumes are growing as a percentage of the traffic volume
+-- [Findings] The brand, direct, and organic volumes are growing as a percentage of the traffic volume.
 
 -----------------------------------------------------------------------------------------------------------------------------------------------
-
 
 -- 11 -- What is the monthly volume patterns?
 
@@ -234,10 +227,9 @@ WHERE
     w.created_at LIKE '2012%'
 GROUP BY 1 , 2;
 
--- [Findings] Oct , Nov and Dec had the highest number of orders
+-- [Findings] Oct , Nov and Dec had the highest number of orders.
 
 -----------------------------------------------------------------------------------------------------------------------------------------------
-
 
 -- 12 -- Analyze the average website session volume by hour of day and by day week to staff appropriately and improve customer experience.
 
@@ -263,7 +255,7 @@ FROM
 GROUP BY 1
 ORDER BY 1;
 
--- [Findings] the highest average volumes are from 10:00 to 18:00 on weekdays.
+-- [Findings] The highest average volumes are from 10:00 to 18:00 on weekdays.
 
 -----------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -286,7 +278,7 @@ WHERE
 GROUP BY 1
 ORDER BY 3 DESC;
 
--- [Findings] customers are coming back for repeat visits mainly through organic search, paid brand and direct type in.
+-- [Findings] Customers are coming back for repeat visits mainly through organic search, paid brand and direct type in.
 
 -----------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -308,10 +300,9 @@ WHERE
     w.created_at LIKE '2014%'
 GROUP BY 1;
 
--- [Findings]  repeat sessions are more likely to convert and produce more revenue per session.
+-- [Findings] The repeat sessions are more likely to convert and produce more revenue per session.
 
 -----------------------------------------------------------------------------------------------------------------------------------------------
-
 
 -- 15 -- What is the overall session and order volume, trended by quarter for the life of the business?
 
@@ -344,9 +335,10 @@ FROM
     orders o ON w.website_session_id = o.website_session_id
 GROUP BY 1 , 2;
 
--- [Findings] the conv_rates are gradually increasing.
+-- [Findings] The conv_rates are gradually increasing.
 
 ------------------------------------------------------------------------------------------------------------------------------------------------- 
+
 -- 17 -- What are the quarterly orders and conversion rates for each channel?
 
 SELECT 
