@@ -313,25 +313,38 @@ GROUP BY 1;
 -----------------------------------------------------------------------------------------------------------------------------------------------
 
 
--- 15 -- 
+-- 15 -- What is the overall session and order volume, trended by quarter for the life of the business?
 
+SELECT 
+    YEAR(w.created_at) AS year,
+    QUARTER(w.created_at) AS quarter,
+    COUNT(DISTINCT w.website_session_id) AS total_sessions,
+    COUNT(DISTINCT o.order_id) AS total_orders
+FROM
+    website_sessions w
+        LEFT JOIN
+    orders o ON w.website_session_id = o.website_session_id
+GROUP BY 1 , 2;
 
-
--- [Findings] 
+-- [Findings] Q4 had the highest number of sessions and orders.
 
 -----------------------------------------------------------------------------------------------------------------------------------------------
 
--- 7 -- What are the most viewed website pages? 
+-- 16 -- What are the most quarterly figures for session to order conversion rate, revenue per order, and revenue per session?
 
 SELECT 
-    pageview_url,
-    COUNT(DISTINCT website_pageview_id) AS sessions
+    YEAR(w.created_at) AS year,
+    QUARTER(w.created_at) AS quarter,
+    ROUND((COUNT(DISTINCT o.order_id) / COUNT(DISTINCT w.website_session_id)) * 100, 2) AS conv_rate,
+    ROUND(SUM(price_usd) / COUNT(DISTINCT o.order_id), 2) AS rev_per_order,
+    ROUND(SUM(price_usd) / COUNT(DISTINCT w.website_session_id), 2) AS rev_per_session
 FROM
-    website_pageviews
-GROUP BY 1
-ORDER BY 2 DESC;
+    website_sessions w
+        LEFT JOIN
+    orders o ON w.website_session_id = o.website_session_id
+GROUP BY 1 , 2;
 
--- [Findings] the products page has the highest number of sessions 
+-- [Findings] the conv_rates are gradually increasing.
 
 
 
