@@ -263,24 +263,52 @@ FROM
 GROUP BY 1
 ORDER BY 1;
 
--- [Findings] the highest average volumes are from 10:00 to 18:00 on weekdays
+-- [Findings] the highest average volumes are from 10:00 to 18:00 on weekdays.
 
 -----------------------------------------------------------------------------------------------------------------------------------------------
 
--- 13 -- 
+-- 13 -- What are the channels that customers come backt through to compare new vs. repeat sessions by channel?
 
+SELECT 
+    CASE
+        WHEN utm_source IS NULL AND http_referer IS NULL THEN 'direct_type_in'
+        WHEN utm_source IS NULL AND http_referer IS NOT NULL THEN 'organic_search'
+        WHEN utm_campaign = 'brand' THEN 'paid_brand'
+        WHEN utm_campaign = 'nonbrand' THEN 'paid_nonbrand'
+        WHEN utm_source = 'socialbook' THEN 'paid_social'
+    END AS channel_group,
+    COUNT(DISTINCT CASE WHEN is_repeat_session = 0 THEN website_session_id END) AS new_sessions,
+    COUNT(DISTINCT CASE WHEN is_repeat_session = 1 THEN website_session_id END) AS repeat_sessions
+FROM
+    website_sessions
+WHERE
+    created_at LIKE '2014%'
+GROUP BY 1
+ORDER BY 3 DESC;
 
-
--- 
+-- [Findings] customers are coming back for repeat visits mainly through organic search, paid brand and direct type in.
 
 -----------------------------------------------------------------------------------------------------------------------------------------------
 
+-- 14 -- Compare conversion rates and revenue per session for repeat sessions vs new sessions.
 
--- 14 -- 
+SELECT 
+    CASE
+        WHEN w.is_repeat_session = 0 THEN 'new'
+        WHEN w.is_repeat_session = 1 THEN 'repeat'
+    END AS is_repeat_session,
+    COUNT(DISTINCT w.website_session_id) AS sessions,
+    ROUND(COUNT(DISTINCT o.order_id) / COUNT(DISTINCT w.website_session_id), 2) AS conv_rate,
+    ROUND((SUM(price_usd) / COUNT(DISTINCT w.website_session_id)), 2) AS rev_per_session
+FROM
+    website_sessions w
+        LEFT JOIN
+    orders o ON w.website_session_id = o.website_session_id
+WHERE
+    w.created_at LIKE '2014%'
+GROUP BY 1;
 
-
-
--- [Findings] 
+-- [Findings]  repeat sessions are more likely to convert and produce more revenue per session.
 
 -----------------------------------------------------------------------------------------------------------------------------------------------
 
