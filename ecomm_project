@@ -7,7 +7,7 @@ Traffic sources analysis
 
 */
 
--- 1 -- Looking for the top traffic sources to understand where the bulk of the website sessions are coming from?
+-- 1 -- What are the top traffic sources to understand where the bulk of the website sessions are coming from?
 
 SELECT 
     utm_source,
@@ -19,7 +19,7 @@ FROM
 GROUP BY 1 , 2 , 3
 ORDER BY sessions DESC;
 
--- [Findings] gsearch nonbrand had the highest sessions
+-- [Findings] gsearch nonbrand have the highest sessions
 
 -----------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -28,7 +28,7 @@ ORDER BY sessions DESC;
 SELECT 
     COUNT(DISTINCT w.website_session_id) AS sessions,
     COUNT(DISTINCT o.order_id) AS orders,
-    ROUND((COUNT(DISTINCT o.order_id) / COUNT(DISTINCT w.website_session_id) * 100), 1) AS conv_rate
+    ROUND((COUNT(DISTINCT o.order_id) / COUNT(DISTINCT w.website_session_id) * 100), 2) AS conv_rate
 FROM
     website_sessions w
         LEFT JOIN
@@ -57,7 +57,7 @@ WHERE
         AND w.utm_campaign = 'nonbrand'
 GROUP BY 1;
 
--- [Findings] desktop is 3.73 whereas mobile is 0.96
+-- [Findings] desktop is 3.73% whereas mobile is 0.96%
 
 -----------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -66,12 +66,11 @@ GROUP BY 1;
 select utm_source, count(distinct website_session_id) from website_sessions;
 
 SELECT 
-    YEAR(w.created_at) AS year_trend,
-    MONTH(w.created_at) AS monthly_trend,
+    YEAR(w.created_at) AS year,
+    MONTH(w.created_at) AS month,
     COUNT(DISTINCT w.website_session_id) AS sessions,
     COUNT(DISTINCT o.order_id) AS orders,
-    ROUND((COUNT(DISTINCT o.order_id) / COUNT(DISTINCT w.website_session_id)) * 100,
-            2) AS conv_rate
+    ROUND((COUNT(DISTINCT o.order_id) / COUNT(DISTINCT w.website_session_id)) * 100, 2) AS conv_rate
 FROM
     website_sessions w
         LEFT JOIN
@@ -86,13 +85,52 @@ ORDER BY 2;
 
 -----------------------------------------------------------------------------------------------------------------------------------------------
 
-/*
+-- 5--  What are the monthly trends of the gsearch sessions and orders this time splitting out nonbrand and brand campaigns separately?
 
-Website performance analysis
+SELECT 
+    YEAR(w.created_at) AS year,
+    MONTH(w.created_at) AS month,
+    COUNT(DISTINCT CASE WHEN w.utm_campaign = 'nonbrand' THEN w.website_session_id ELSE NULL END) AS nonbrand_sessions,
+    COUNT(DISTINCT CASE WHEN w.utm_campaign = 'nonbrand' THEN o.order_id ELSE NULL END) AS nonbrand_orders,
+    COUNT(DISTINCT CASE WHEN w.utm_campaign = 'brand' THEN w.website_session_id ELSE NULL END) AS brand_sessions,
+    COUNT(DISTINCT CASE WHEN w.utm_campaign = 'brand' THEN o.order_id ELSE NULL END) AS brand_orders
+FROM
+    website_sessions w
+        LEFT JOIN
+    orders o ON w.website_session_id = o.website_session_id
+WHERE
+   w.created_at LIKE '2014%'
+        AND w.utm_source = 'gsearch'
+GROUP BY 1 , 2;
 
-*/
+-- [Findings]  there is a growth in both sessions and orders for brand and nonbrand
 
--- 1 -- What are the most viewed website pages? 
+-----------------------------------------------------------------------------------------------------------------------------------------------
+
+-- 6-- What are monthly sessions and orders split by device type? 
+
+SELECT 
+    YEAR(w.created_at) AS year,
+    MONTH(w.created_at) AS month,
+    COUNT(DISTINCT CASE WHEN w.device_type = 'desktop' THEN w.website_session_id ELSE NULL END) AS deskop_sessions,
+    COUNT(DISTINCT CASE WHEN w.device_type = 'desktop' THEN o.order_id ELSE NULL END) AS desktop_orders,
+    COUNT(DISTINCT CASE WHEN w.device_type = 'mobile' THEN w.website_session_id ELSE NULL END) AS mobile_sessions,
+    COUNT(DISTINCT CASE WHEN w.device_type = 'mobile' THEN o.order_id ELSE NULL END) AS mobile_orders
+FROM
+    website_sessions w
+        LEFT JOIN
+    orders o ON w.website_session_id = o.website_session_id
+WHERE
+     w.created_at LIKE '2014%'
+        AND w.utm_source = 'gsearch'
+        AND w.utm_campaign = 'nonbrand'
+GROUP BY 1 , 2;
+
+-- [Findings]  the number of sessions and orders from desktops is a lot higher than mobiles
+
+-----------------------------------------------------------------------------------------------------------------------------------------------
+
+-- 7 -- What are the most viewed website pages? 
 
 SELECT 
     pageview_url,
@@ -106,24 +144,26 @@ ORDER BY 2 DESC;
 
 -----------------------------------------------------------------------------------------------------------------------------------------------
 
--- 1. Gsearch seems to be the biggest driver of our business. Could you pull
--- monthly trends for gsearch sessions and orders so that we can showcase the growth there?
-
-select utm_source, count(distinct website_session_id) from website_sessions;
+-- 8 -- What is the nonbrand conversion rates from session to order for gsearch and bsearch?
+data by device type
 
 SELECT 
-    YEAR(w.created_at) AS year_trend,
-    MONTH(w.created_at) AS monthly_trend,
-    COUNT(DISTINCT w.website_session_id) AS sessions,
-    COUNT(DISTINCT o.order_id) AS orders,
-    ROUND((COUNT(DISTINCT o.order_id) / COUNT(DISTINCT w.website_session_id)) * 100, 1) AS conv_rate
+    w.device_type AS deveice_type,
+    w.utm_source AS utm_source,
+    COUNT(DISTINCT w.website_session_id) AS total_sessions,
+    COUNT(DISTINCT o.order_id) AS total_orders,
+    ROUND(((COUNT(DISTINCT o.order_id) / COUNT(DISTINCT w.website_session_id)) * 100), 2) AS conv_rate
 FROM
     website_sessions w
         LEFT JOIN
     orders o ON w.website_session_id = o.website_session_id
 WHERE
-    w.created_at < '2012-11-27'
-        AND w.utm_source = 'gsearch'
+    w.created_at LIKE '2014%'
+        AND utm_campaign = 'nonbrand'
 GROUP BY 1 , 2;
+
+-- [Findings] bsearch performance is not as good as gsearch
+
+-----------------------------------------------------------------------------------------------------------------------------------------------
 
         
