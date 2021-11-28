@@ -13,4 +13,4 @@ FROM
 GROUP BY 1 , 2 , 3
 ORDER BY sessions DESC;
 
--- https://github.com/saleh-abdallah/portfolio/blob/main/hotel_project
+[Result] (https://github.com/saleh-abdallah/portfolio/blob/main/hotel_project)
