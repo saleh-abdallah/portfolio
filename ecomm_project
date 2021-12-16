@@ -365,7 +365,7 @@ FROM
     orders o ON w.website_session_id = o.website_session_id
 GROUP BY 1 , 2;
 
-[Findings] The order number is increasing over each quarter.
+-- [Findings] The order number is increasing over each quarter.
 
 ------------------------------------------------------------------------------------------------------------------------------------------------- 
 -- 18 -- What is the monthly trending total revenue per product?
@@ -386,6 +386,6 @@ FROM
     order_items 
 GROUP BY 1 , 2;
 
-[Findings] PS4 still has the highest revenue although the revenue began to decrease in Q1 2014 at the launch of the PS5 which has an increase in revenue since then.
+-- [Findings] PS4 still has the highest revenue although the revenue began to decrease in Q1 2014 at the launch of the PS5 which has an increase in revenue since then.
 
 
