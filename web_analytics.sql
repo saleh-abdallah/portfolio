@@ -1,6 +1,11 @@
 /*
                             
-Ecommerce Website Analysis  
+Web Analytics
+
+Introduction: The customer is a manufacturing company that operates in different states.
+
+Business Task: The website manager wants to analyze the website performance amd customer shopping trends for implementing a strategy to increase web traffic 
+and improve the customer experience.
                             
 */
 
