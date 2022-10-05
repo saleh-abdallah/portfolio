@@ -1,6 +1,6 @@
 /*
                             
-Web Analytics
+Web Analysis
 
 Introduction: The customer is a manufacturing company that operates in different states.
 
