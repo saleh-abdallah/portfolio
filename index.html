@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sentiment Analysis Demo</title>
+</head>
+<body>
+  <h1>Sentiment Analysis</h1>
+  <textarea id="tweetInput" rows="4" cols="50" placeholder="Type your tweet here..."></textarea><br />
+  <button onclick="analyzeSentiment()">Analyze Sentiment</button>
+  <h2>Result:</h2>
+  <div id="result"></div>
+
+  <script>
+    async function analyzeSentiment() {
+      const tweet = document.getElementById('tweetInput').value;
+      if (!tweet.trim()) {
+        alert('Please enter some text');
+        return;
+      }
+
+      const resultDiv = document.getElementById('result');
+      resultDiv.textContent = 'Analyzing...';
+
+      try {
+        const response = await fetch('http://a41554d7bd2744ab58f7e8895af2f88e-1095505411.us-east-1.elb.amazonaws.com/predict', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({text: tweet})
+        });
+
+        if (!response.ok) {
+          resultDiv.textContent = 'Error: ' + response.statusText;
+          return;
+        }
+
+        const data = await response.json();
+        resultDiv.textContent = `Sentiment: ${data.sentiment}`;
+      } catch (error) {
+        resultDiv.textContent = 'Error: ' + error.message;
+      }
+    }
+  </script>
+</body>
+</html>
